@@ -37,7 +37,7 @@ abstract contract BaseSettlementHandler is
         BurnUnlock,
         LockUnlock
     }
-
+//@audit q, why 'to_token' and 'to' are a uint256 variable?
     event CrossChainLocked(
         uint256 indexed txid,
         address indexed from,
@@ -50,6 +50,7 @@ abstract contract BaseSettlementHandler is
         SettlementMode mode
     );
 
+//@audit q, why 'to_token' and 'to' are a uint256 variable?
     struct CreatedCrossChainTx {
         uint256 txid;
         string from_chain;
