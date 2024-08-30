@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {ISettlementHandler} from "contracts/interfaces/ISettlementHandler.sol";
-import {PayloadType} from "contracts/libraries/Message.sol";
+import {ISettlementHandler} from "../../contracts/interfaces/ISettlementHandler.sol";
+import {PayloadType} from "../../contracts/libraries/Message.sol";
 
 interface ISettlement {
     /**

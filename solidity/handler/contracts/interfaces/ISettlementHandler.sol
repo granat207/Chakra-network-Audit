@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {CrossChainMsgStatus, PayloadType} from "contracts/libraries/Message.sol";
+import {CrossChainMsgStatus, PayloadType} from "../../contracts/libraries/Message.sol";
 
 interface ISettlementHandler {
     function receive_cross_chain_callback(

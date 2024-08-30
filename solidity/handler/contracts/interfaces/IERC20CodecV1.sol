@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "contracts/libraries/ERC20Payload.sol";
+import "../../contracts/libraries/ERC20Payload.sol";
 
 /**
  * @title IERC20CodecV1

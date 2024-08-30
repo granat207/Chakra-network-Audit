@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {ISettlement} from "contracts/interfaces/ISettlement.sol";
-import {IERC20CodecV1} from "contracts/interfaces/IERC20CodecV1.sol";
-import {ISettlementSignatureVerifier} from "contracts/interfaces/ISettlementSignatureVerifier.sol";
-import {AddressCast} from "contracts/libraries/AddressCast.sol";
-import {Message, PayloadType} from "contracts/libraries/Message.sol";
-import {MessageV1Codec} from "contracts/libraries/MessageV1Codec.sol";
+import {ISettlement} from "../contracts/interfaces/ISettlement.sol";
+import {IERC20CodecV1} from "../contracts/interfaces/IERC20CodecV1.sol";
+import {ISettlementSignatureVerifier} from "../contracts/interfaces/ISettlementSignatureVerifier.sol";
+import {AddressCast} from "../contracts/libraries/AddressCast.sol";
+import {Message, PayloadType} from "../contracts/libraries/Message.sol";
+import {MessageV1Codec} from "../contracts/libraries/MessageV1Codec.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {AccessControlUpgradeable} from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "contracts/libraries/ERC20Payload.sol";
+import "../contracts/libraries/ERC20Payload.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";

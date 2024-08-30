@@ -5,7 +5,7 @@ pragma solidity ^0.8.24;
 import {AccessControlUpgradeable} from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import {ISettlementSignatureVerifier} from "contracts/interfaces/ISettlementSignatureVerifier.sol";
+import {ISettlementSignatureVerifier} from "../contracts/interfaces/ISettlementSignatureVerifier.sol";
 
 // BaseSettlement is an abstract contract that inherits from OwnableUpgradeable, UUPSUpgradeable, and AccessControlUpgradeable
 abstract contract BaseSettlement is

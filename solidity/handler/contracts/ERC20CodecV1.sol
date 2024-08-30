@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {IERC20CodecV1} from "contracts/interfaces/IERC20CodecV1.sol";
+import {IERC20CodecV1} from "../contracts/interfaces/IERC20CodecV1.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "contracts/libraries/ERC20Payload.sol";
+import "../contracts/libraries/ERC20Payload.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
 /**

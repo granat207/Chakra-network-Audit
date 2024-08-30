@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {PayloadType, CrossChainMsgStatus} from "contracts/libraries/Message.sol";
+import {PayloadType, CrossChainMsgStatus} from "../../contracts/libraries/Message.sol";
 
 // Interface for a settlement handler, responsible for processing cross-chain messages
 interface ISettlementHandler {

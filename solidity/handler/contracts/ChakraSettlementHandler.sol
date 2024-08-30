@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
-import {ISettlement} from "contracts/interfaces/ISettlement.sol";
-import {IERC20CodecV1} from "contracts/interfaces/IERC20CodecV1.sol";
-import {IERC20Mint} from "contracts/interfaces/IERC20Mint.sol";
-import {IERC20Burn} from "contracts/interfaces/IERC20Burn.sol";
-import {ISettlementHandler} from "contracts/interfaces/ISettlementHandler.sol";
-import {AddressCast} from "contracts/libraries/AddressCast.sol";
-import {Message, PayloadType, CrossChainMsgStatus} from "contracts/libraries/Message.sol";
-import {MessageV1Codec} from "contracts/libraries/MessageV1Codec.sol";
+import {ISettlement} from "../contracts/interfaces/ISettlement.sol";
+import {IERC20CodecV1} from "../contracts/interfaces/IERC20CodecV1.sol";
+import {IERC20Mint} from "../contracts/interfaces/IERC20Mint.sol";
+import {IERC20Burn} from "../contracts/interfaces/IERC20Burn.sol";
+import {ISettlementHandler} from "../contracts/interfaces/ISettlementHandler.sol";
+import {AddressCast} from "../contracts/libraries/AddressCast.sol";
+import {Message, PayloadType, CrossChainMsgStatus} from "../contracts/libraries/Message.sol";
+import {MessageV1Codec} from "../contracts/libraries/MessageV1Codec.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {BaseSettlementHandler} from "contracts/BaseSettlementHandler.sol";
-import "contracts/libraries/ERC20Payload.sol";
+import {BaseSettlementHandler} from "../contracts/BaseSettlementHandler.sol";
+import "../contracts/libraries/ERC20Payload.sol";
 
 contract ChakraSettlementHandler is BaseSettlementHandler, ISettlementHandler {
     mapping(string => mapping(uint256 => bool)) public handler_whitelist;

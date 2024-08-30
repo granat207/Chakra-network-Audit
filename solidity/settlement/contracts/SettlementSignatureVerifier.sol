@@ -2,7 +2,7 @@
 pragma solidity ^0.8.24;
 
 // Importing various contracts and libraries
-import {ISettlementSignatureVerifier} from "contracts/interfaces/ISettlementSignatureVerifier.sol";
+import {ISettlementSignatureVerifier} from "../contracts/interfaces/ISettlementSignatureVerifier.sol";
 import {AccessControlUpgradeable} from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";

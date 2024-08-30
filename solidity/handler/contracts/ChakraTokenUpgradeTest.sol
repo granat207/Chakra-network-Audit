@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {IERC20Mint} from "contracts/interfaces/IERC20Mint.sol";
-import {IERC20Burn} from "contracts/interfaces/IERC20Burn.sol";
 import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import {TokenRoles} from "contracts/tests/TokenRoles.t.sol";
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {AccessControlUpgradeable} from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import {TokenRoles} from "../contracts/TokenRoles.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-contract MyToken is ERC20Upgradeable, TokenRoles, IERC20Mint, IERC20Burn {
+contract ChakraTokenUpgrade is ERC20Upgradeable, TokenRoles {
     uint8 set_decimals;
 
     function initialize(
@@ -25,26 +26,18 @@ contract MyToken is ERC20Upgradeable, TokenRoles, IERC20Mint, IERC20Burn {
         address newImplementation
     ) internal override onlyOwner {}
 
-    function mint(uint256 value) external onlyRole(OPERATOR_ROLE) {
-        _mint(_msgSender(), value);
-    }
-
-    function mint_to(
+    function mint(
         address account,
-        uint256 value
+        uint256 amount
     ) external onlyRole(OPERATOR_ROLE) {
-        _mint(account, value);
+        _mint(account, amount);
     }
 
-    function burn(uint256 value) external onlyRole(OPERATOR_ROLE) {
-        _burn(_msgSender(), value);
-    }
-
-    function burn_from(
+    function burn(
         address account,
-        uint256 value
+        uint256 amount
     ) external onlyRole(OPERATOR_ROLE) {
-        _burn(account, value);
+        _burn(account, amount);
     }
 
     function decimals() public view override returns (uint8) {
@@ -52,6 +45,6 @@ contract MyToken is ERC20Upgradeable, TokenRoles, IERC20Mint, IERC20Burn {
     }
 
     function version() public pure returns (string memory) {
-        return "0.0.1";
+        return "0.0.2";
     }
 }

@@ -2,10 +2,10 @@
 pragma solidity ^0.8.24;
 
 // Import statements for required interfaces and contracts
-import {IERC20Mint} from "contracts/interfaces/IERC20Mint.sol";
-import {IERC20Burn} from "contracts/interfaces/IERC20Burn.sol";
+import {IERC20Mint} from "../contracts/interfaces/IERC20Mint.sol";
+import {IERC20Burn} from "../contracts/interfaces/IERC20Burn.sol";
 import {ERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import {TokenRoles} from "contracts/TokenRoles.sol";
+import {TokenRoles} from "../contracts/TokenRoles.sol";
 
 /**
  * @title ChakraToken
