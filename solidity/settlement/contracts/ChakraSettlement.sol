@@ -108,6 +108,11 @@ contract ChakraSettlement is BaseSettlement {
      * @param payload_type The type of the payload
      * @param payload The payload of the message
      */
+     //@audit medium, DOS attack, users could perform DOS attack to the ChakraNetwork
+     //@audit medium, transaction ids between chakra handler and chakra settlement may not be unique, this may happens if malicious users calls 'directly 'send_cross_chain_msg' updating their nonce_manager. 
+     //By doing so the txId calculated in the handler contact will be different that that created on the settlement contract.
+     //If this happens, when a callback is performed, if the handler is in mode MintBurn mode, no burn will be done since the txId will be differents and the call will fail.
+     //@audit-low, the users can increase the nonce of the others users.
     function send_cross_chain_msg(
         string memory to_chain,
         address from_address,
@@ -115,7 +120,7 @@ contract ChakraSettlement is BaseSettlement {
         PayloadType payload_type,
         bytes calldata payload
     ) external {
-        nonce_manager[from_address] += 1;
+        nonce_manager[from_address] += 1; 
 
         address from_handler = msg.sender;
 
@@ -167,16 +172,16 @@ contract ChakraSettlement is BaseSettlement {
      * @param sign_type The type of the signature
      * @param signatures The signatures of the message
      */
-    function receive_cross_chain_msg(
-        uint256 txid,
-        string memory from_chain,
-        uint256 from_address,
+    function receive_cross_chain_msg( 
+        uint256 txid, 
+        string memory from_chain, 
+        uint256 from_address, 
         uint256 from_handler,
         address to_handler,
         PayloadType payload_type,
         bytes calldata payload,
-        uint8 sign_type, // validators signature type /  multisig or bls sr25519
-        bytes calldata signatures // signature array
+        uint8 sign_type, 
+        bytes calldata signatures 
     ) external {
         {
             // verify signature
@@ -201,7 +206,7 @@ contract ChakraSettlement is BaseSettlement {
                 "Invalid transaction status"
             );
         }
-
+// @audit low, struct bad updated in the sixth position there should be 'to_handler' instead of 'address(this)' 
         receive_cross_txs[txid] = ReceivedCrossChainTx(
             txid,
             from_chain,

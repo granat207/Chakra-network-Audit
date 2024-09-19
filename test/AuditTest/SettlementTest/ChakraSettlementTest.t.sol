@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-//run this test --> sudo forge test --match-path test/AuditTest/HandlerTest/ChakraSettlementHandlerTest.t.sol -vvv
+//run this test --> sudo forge test --match-path test/AuditTest/SettlementTest/ChakraSettlementTest.t.sol -vvv
 
 import {Test, console} from "../../../lib/forge-std/src/Test.sol"; 
 
@@ -25,7 +25,9 @@ import {ISettlement} from "../../../solidity/handler/contracts/interfaces/ISettl
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract ChakraSettlementHandlerTest is Test{
+import {PayloadType, CrossChainMsgStatus} from "../../../solidity/settlement/contracts/libraries/Message.sol";
+
+contract ChakraSettlementTest is Test{
 
     uint256 ethFork; 
     uint256 arbFork;
@@ -53,9 +55,12 @@ ChakraSettlement public chakraSettlementEth;
 SettlementSignatureVerifier public settlementSignatureVerifierEth; 
 
 ChakraToken chakraToken_arb; 
-ChakraToken chakraToken_eth;  
+ChakraToken chakraToken_eth; 
 
 address public owner; 
+
+address public bob = makeAddr("bob");
+address public tob = makeAddr("tob");
    
 function setUp() public {
 initializeOnArbitrum();
@@ -85,9 +90,9 @@ codecArb.initialize(address(this));
 //chakraSettlement
 chakraSettlementArb = new ChakraSettlement();
 address[] memory managers = new address[](2); 
-managers[0] = address(231); 
-managers[1] = address(3141); 
-chakraSettlementArb.initialize("Abitrum", 137, address(this), managers, 1, address(settlementSignatureVerifierArb));
+managers[0] = bob; 
+managers[1] = tob; 
+chakraSettlementArb.initialize("Arbitrum", 137, owner, managers, 1, address(settlementSignatureVerifierArb));
 
 //chakraSettlementHandler
 chakraSettlementHandlerArb = new ChakraSettlementHandler();
@@ -101,8 +106,6 @@ function initializeOnEthereum() public {
 ethFork = vm.createFork("here i used my eth rpc fork");
 vm.selectFork(ethFork);
 owner = address(this); 
-//chakraSettlement
-chakraSettlementEth = new ChakraSettlement();
 
 //settlementSignatureVerifier 
 settlementSignatureVerifierEth = new SettlementSignatureVerifier(); 
@@ -119,6 +122,13 @@ codecEth = new ERC20CodecV1();
 //codec initialized
 codecEth.initialize(address(this));
 
+//chakraSettlement
+chakraSettlementEth = new ChakraSettlement();
+address[] memory managers = new address[](2); 
+managers[0] = bob; 
+managers[1] = tob; 
+chakraSettlementEth.initialize("Ethereum", 1, owner, managers, 1, address(settlementSignatureVerifierEth));
+
 //chakraSettlementHandler
 chakraSettlementHandlerEth = new ChakraSettlementHandler();
 chakraSettlementHandlerEth.initialize(address(this), BaseSettlementHandler.SettlementMode.MintBurn, "Ethereum", address(chakraToken_eth), address(codecEth), address(settlementSignatureVerifierEth), address(chakraSettlementEth));
@@ -127,44 +137,74 @@ chakraSettlementHandlerEth.initialize(address(this), BaseSettlementHandler.Settl
 chakraToken_eth.add_operator(address(chakraSettlementHandlerEth));
 }
 
-
-function test_settlementHandlerCantBeInitializedTwice_arb() public {
-vm.selectFork(arbFork);
-vm.expectRevert(); 
-chakraSettlementHandlerArb.initialize(address(this), BaseSettlementHandler.SettlementMode.MintBurn, "Arbitrum", address(chakraToken_arb), address(codecArb), address(settlementSignatureVerifierArb), address(chakraSettlementArb));
-}
-
-// add / remove handler and onlyOwner 
-function test_addAndRemoveHandler_arb() public {
-vm.selectFork(arbFork);
+//initial variables
+function test_initialVariables() public {
 vm.startPrank(owner); 
-chakraSettlementHandlerArb.add_handler("BSC", 10);
-assertEq(chakraSettlementHandlerArb.handler_whitelist("BSC", 10), true); 
-assertEq(chakraSettlementHandlerArb.is_valid_handler("BSC", 10), true);
-chakraSettlementHandlerArb.remove_handler("BSC", 10);
-assertEq(chakraSettlementHandlerArb.handler_whitelist("BSC", 10), false); 
-assertEq(chakraSettlementHandlerArb.is_valid_handler("BSC", 10), false);
-vm.stopPrank(); 
-
-address casualAddr = address(123); 
-vm.startPrank(casualAddr); 
-vm.expectRevert(); 
-chakraSettlementHandlerArb.add_handler("BSC", 10);
+vm.selectFork(arbFork);
+assertEq(chakraSettlementArb.chain_id(), 137); 
+assertEq(chakraSettlementArb.contract_chain_name(), "Arbitrum"); 
+assertEq(chakraSettlementArb.required_validators(), 1); 
+assertEq(chakraSettlementArb.validator_count(), 0); 
 }
 
-//send cross chain tx
-function test_sendCrossChainTx() public {
+//cant initialize again
+function test_cantInitializeAgin() public {
+vm.startPrank(owner); 
 vm.selectFork(arbFork);
-address marco = address(123); 
-deal(address(chakraToken_arb), marco, 100e18); 
-address paul = address(124); 
-vm.startPrank(marco); 
-IERC20(chakraToken_arb).approve(address(chakraSettlementHandlerArb), 10e18);
-chakraSettlementHandlerArb.cross_chain_erc20_settlement("Ethereum", uint160(address(chakraSettlementEth)), uint160(address(chakraToken_arb)), uint160(address(paul)), 10e18);
-assertEq(IERC20(chakraToken_arb).balanceOf(marco), 100e18 - 10e18); 
-assertEq(IERC20(chakraToken_arb).balanceOf(address(chakraSettlementHandlerArb)), 10e18); 
-assertEq(chakraSettlementHandlerArb.nonce_manager(marco), 1); 
-assertEq(chakraSettlementHandlerArb.cross_chain_msg_id_counter(), 1); 
+vm.expectRevert(); 
+address[] memory managers = new address[](2); 
+managers[0] = bob; 
+managers[1] = tob; 
+chakraSettlementArb._Settlement_init("Arbitrum",137, owner, managers, 1, address(settlementSignatureVerifierArb));
+}
+
+//add manager / remove manager / is manager
+function test_managers() public {
+vm.startPrank(owner); 
+vm.selectFork(arbFork);
+address pino = makeAddr("pino");
+chakraSettlementArb.add_manager(pino);
+assertEq(chakraSettlementArb.is_manager(pino), true);
+chakraSettlementArb.remove_manager(pino);
+assertEq(chakraSettlementArb.is_manager(pino),false);
+}
+
+//add validator / remove validator / is validator /set required num of validators
+function test_validators() public {
+vm.selectFork(arbFork);
+    vm.startPrank(owner);
+    settlementSignatureVerifierArb.add_manager(bob);
+    settlementSignatureVerifierArb.add_manager(address(chakraSettlementArb));
+    assertEq(settlementSignatureVerifierArb.is_manager(bob), true);
+    vm.stopPrank();
+vm.startPrank(bob); 
+address luca = makeAddr("luca");
+chakraSettlementArb.add_validator(luca);
+assertEq(chakraSettlementArb.is_validator(luca), true);
+assertEq(chakraSettlementArb.validator_count(), 1);
+chakraSettlementArb.remove_validator(luca);
+assertEq(chakraSettlementArb.is_validator(luca), false);
+assertEq(chakraSettlementArb.validator_count(), 0);
+chakraSettlementArb.set_required_validators_num(10);
+assertEq(chakraSettlementArb.required_validators(), 10); 
+}
+
+//verify 
+function test_verifySignature() public {
+vm.selectFork(arbFork);
+vm.startPrank(owner);
+settlementSignatureVerifierArb.add_manager(bob);
+vm.stopPrank();
+vm.startPrank(bob);
+uint256 privateKey = 0x12D; 
+address validator1 = vm.addr(privateKey);
+settlementSignatureVerifierArb.add_validator(validator1);
+vm.stopPrank(); 
+vm.startPrank(validator1); 
+bytes32 message = keccak256(abi.encodePacked("Test Message"));
+(uint8 v,bytes32 r, bytes32 s) = vm.sign(privateKey, message);
+bytes memory signature = abi.encodePacked(r, s, v);
+settlementSignatureVerifierArb.verify(message, signature, 0);
 }
 
 }

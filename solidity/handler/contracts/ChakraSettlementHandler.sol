@@ -108,6 +108,8 @@ contract ChakraSettlementHandler is BaseSettlementHandler, ISettlementHandler {
      * @param to The recipient address
      * @param amount The amount to transfer
      */
+     //@audit high, Malicious users could drain the settlements handler by receiving more that what they locked.
+     //@audit-medium, there's not input validation for 'to_handler' and 'to_chain'
     function cross_chain_erc20_settlement(
         string memory to_chain,
         uint256 to_handler,
@@ -222,6 +224,9 @@ contract ChakraSettlementHandler is BaseSettlementHandler, ISettlementHandler {
         );
     }
 
+//@audit high, Every ERC20 token could be accepted and used in this protocol, but all the tokens (Such as LINK, UNI, DAI etc) that has not the 'ChakraToken' design, 
+//do not implements the functions 'mint_to' and 'burn_from', so these tokens can't be used in the following modes: MintBurn, LockMint, BurnUnlock. 
+//With this vulnerability, users could not be able to burn tokens on the source chain, but more impartant, thet could not be able to mint tokens on the destination chain.
     function _erc20_mint(address account, uint256 amount) internal {
         IERC20Mint(token).mint_to(account, amount);
     }
@@ -241,6 +246,7 @@ contract ChakraSettlementHandler is BaseSettlementHandler, ISettlementHandler {
      * @param to The locked token to account
      * @param amount The amount to unlock
      */
+     //@audit-medium/high if settlement handler mode is setted to lockMint, the funds locked by the user will remain to be locked forever in the settlement handler contract and no burn is applied differently to the MintBurn mode
     function _erc20_lock(address from, address to, uint256 amount) internal {
         _safe_transfer_from(from, to, amount);
     }
@@ -250,6 +256,8 @@ contract ChakraSettlementHandler is BaseSettlementHandler, ISettlementHandler {
      * @param to The token unlocked to account
      * @param amount The amount to unlock
      */
+     //@audit-high, if an user performs a cross chain tx to an handler with BurnUnlock or LockUnlock and there not enough tokens to unlock, user will lose his funds,
+     //since there is not a balance check.
     function _erc20_unlock(address to, uint256 amount) internal {
         _safe_transfer(to, amount);
     }
